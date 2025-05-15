@@ -1,23 +1,10 @@
 import { Router } from "express";
+import { getTodos, setTodo, updateTodo, deleteTodo } from "../controllers/todoController.js";
 
 const router = Router();
 
-const getTodo = async (req, res) => {
-    try {
-        const todos = await todos.find({ user: req.user._id });
-        res.status(200).json(todos);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
+router.route("/").get(getTodos).post(setTodo);
+router.route("/:id").put(updateTodo).delete(deleteTodo);
 
 
-
-
-
-
-
-
-
-
-export { getTodo };
+export default router;

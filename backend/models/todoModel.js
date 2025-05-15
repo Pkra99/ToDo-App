@@ -22,5 +22,10 @@ const todoSchema = new mongoose.Schema({
         ref: "User",
         required: true,
     },
+
+    timestampc: {
+        type: Date,
+        default: Date.now,
+    }
 });
 export default mongoose.model("Todo", todoSchema);

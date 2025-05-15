@@ -3,8 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./db/db.js";
-import {getTodo}  from "./routes/todoRoutes.js";
-
+import {getTodo, setTodo, updateTodo, deleteTodo} from "./routes/todoRoutes.js";
 
 dotenv.config({
     path: "./.env"
@@ -30,6 +29,9 @@ connectDB().then(() => {
 });
 
 app.use("/api/todos", getTodo);
+app.use("/api/todos", setTodo);
+app.use("/api/todos", updateTodo);
+app.use("/api/todos", deleteTodo);
 
 
 
