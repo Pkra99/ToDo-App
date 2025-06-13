@@ -23,7 +23,7 @@ const todoSchema = new mongoose.Schema({
         required: true,
     },
 
-    timestampc: {
+    timestamp: {
         type: Date,
         default: Date.now,
     }
