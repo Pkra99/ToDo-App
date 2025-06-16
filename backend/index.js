@@ -13,14 +13,12 @@ dotenv.config({
 const port = process.env.PORT;
 const app = express();
 
-app.use(express.json("limit: 16kb"))
-app.use(express.urlencoded({extended: true, limit: "16kb"}))
+app.use(express.json({ limit: "32kb" }))
+app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
-
-
 app.use(cors({
     origin: process.env.CROS_ORIGIN,
-    Credentials: true
+    credentials: true
 }))
 
 connectDB().then(() => {

@@ -16,7 +16,7 @@ const userSchema = new mongoose.Schema({
         required: true,
         trim: true,
         lowercase: true,
-        uniquie: true,
+        unique: true,
     },
     password: {
         type: String,
@@ -24,28 +24,28 @@ const userSchema = new mongoose.Schema({
     },
     todos: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref : "Todo",
+        ref: "Todo",
     }]
 })
 
-
-userSchema.pre("Save", async function(next){
-    if(!this.isModified("password")) return next();
-    this.password = await bcrypt.hash(this.password)
+userSchema.pre("save", async function (next) {
+    if (!this.isModified("password")) return next();
+    this.password = await bcrypt.hash(this.password, 10)
     next();
 })
 
-userSchema.method.comparePassword = async function (password) {
+
+userSchema.methods.comparePassword = async function (password) {
     return await bcrypt.compare(password, this.password)
 }
 
-userSchema.method.generateAccessToken = function () {
-    return jwt.sign({id: this._id}, process.env.ACCESS_TOKEN_SECRET, {
+userSchema.methods.generateAccessToken = function () {
+    return jwt.sign({ id: this._id }, process.env.ACCESS_TOKEN_SECRET, {
         expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
     });
 };
-userSchema.method.generateRefreshToken = function () {
-    return jwt.sign({id: this._id}, process.env.REFRESH_TOKEN_SECRET, {
+userSchema.methods.generateRefreshToken = function () {
+    return jwt.sign({ id: this._id }, process.env.REFRESH_TOKEN_SECRET, {
         expiresIn: process.env.REFRESH_TOKEN_EXPIRY,
     });
 };
