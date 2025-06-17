@@ -1,158 +1,117 @@
 import Todo from "../models/todoModel.js";
+import User from "../models/userModel.js";
+import ApiError from "../utils/ApiError.js";
+import ApiResponse from "../utils/ApiResponse.js";
+import asyncHandler from "../utils/asyncHandler.js";
 
-// @desc    Get todos
-// @route   GET /api/todos  
-// @access  Public
-const getTodos = async (req, res) => {
-    try {
-        const todos = await Todo.find({});
-        res.status(200).json({
-            success: true,
-            data: todos,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            success: false,
-            message: "An error occurred while fetching todos",
-        });
+const getTodo = asyncHandler(async(req, res) => {
+
+     if(!req.user || !req.user._id){
+        throw new ApiError(401, "Not authorized to access this route")
     }
-};
-// @desc    Set todo
-// @route   POST /api/todos
-// @access  Public
-const setTodo = async (req, res) => {
-    try {
-        const todo = await Todo.create(req.body);
-        res.status(201).json({
-            success: true,
-            data: todo,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            success: false,
-            message: "An error occurred while creating a todo",
-        });
+    const todo = await Todo.find({user: req.user._id})
+
+    if(!todo){
+        throw new ApiError(404, "No todo found")
     }
-};
 
-// @desc    Update todo
-// @route   PUT /api/todos/:id
-// @access  Public
+    res.status(200).json(
+        new ApiResponse(200, todo, "Todo fetched successfully")
+    )
 
-const updateTodo = async (req, res) => {
-    try {
-        const todo = await Todo.findById(req.params.id);
-        if (!todo) {
-            return res.status(404).json({
-                success: false,
-                message: "Todo not found",
-            });
-        }
-        const updatedTodo = await Todo.findByIdAndUpdate(
-            req.params.id,
-            req.body,
-            {
-                new: true,
-            }
-        );
-        res.status(200).json({
-            success: true,
-            data: updatedTodo,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
+
+})
+
+
+const setTodo = asyncHandler(async(req, res) => {
+
+    const {title, description} = req.body
+
+    
+    if(!title || !description) {
+        return res.status(400).json({
             success: false,
-            message: "An error occurred while updating a todo",
-        });
+            message: "Please provide title and description",
+        })    
     }
-};
+    const todo = await Todo.create({
+        title,
+        description,
+        user: req.user._id,
+        completed: false,
+    })
 
-// @desc    Delete todo   
-// @route   DELETE /api/todos/:id
-// @access  Public
+    const user = await User.findById(req.user._id)
 
-const deleteTodo = async (req, res) => {
-    try {
-        const todo = await Todo.findById(req.params.id);
-        if (!todo) {
-            return res.status(404).json({
-                success: false,
-                message: "Todo not found",
-            });
-        }
-        await Todo.findByIdAndDelete(req.params.id);
-        res.status(200).json({
-            success: true,
-            data: {},
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
+    if(!user){
+        throw new ApiError(404, "User not found")
+    }
+
+    user.todos.push(todo._id)
+    await user.save()
+
+    res.status(200)
+    .json(new ApiResponse(200, todo, "Todo created successfully"));
+
+})
+
+
+const updateTodo = asyncHandler(async(req, res) => {
+
+    const todo = await Todo.findById(req.params.id)
+
+    if(!todo){
+        throw new ApiError(404, "No todo found")
+    }
+
+    const {title, description} = req.body
+
+    if(!title || !description) {
+        return res.status(400).json({
             success: false,
-            message: "An error occurred while deleting a todo",
-        });
+            message: "Please provide title and description",
+        })    
     }
-};
 
-export { getTodos, setTodo, updateTodo, deleteTodo };
+    if(todo.user.toString() !== req.user._id.toString()){
+        throw new ApiError(401, "User not authorized")
+    }
 
+    todo.title = title
+    todo.description = description
 
+    todo.save({validateBeforeSave: false})
 
+    res.status(200).json(
+        new ApiResponse(200, todo, "Todo updated successfully")
+    )
 
-
-
-
-
-
-
-
-
-
-
+})
 
 
+const deleteTodo = asyncHandler(async(req, res) => { 
+    
+    const todo = await Todo.findById(req.params.id)
+    
+    if(!todo){
+        throw new ApiError(404, "No todo found")
+    }
 
+    if(todo.user.toString() !== req.user._id.toString()){
+        throw new ApiError(401, "User not authorized")
+    }
+    
+    await todo.deleteOne(todo._id);
 
+    res.status(200).json(
+        new ApiResponse(200, todo, "Todo deleted successfully")
+    )   
 
+})
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// const getTodo = ("/", (req, res) => {
-//   res.status(200).json({ message: "get todo" });
-// });
-
-// const setTodo = ("/", (req, res) => {
-//   res.status(200).json({ message: "set todo" });
-// });
-
-// const updateTodo = ("/:id", (req, res) => {
-//   res.status(200).json({ message: "update todo" });
-// });
-
-// const deleteTodo = ("/:id", (req, res) => {
-//   res.status(200).json({ message: "delete todo" });
-// });
-
-// export { getTodo, setTodo, updateTodo, deleteTodo };
+export {
+    getTodo,
+    setTodo,
+    updateTodo,
+    deleteTodo,
+}

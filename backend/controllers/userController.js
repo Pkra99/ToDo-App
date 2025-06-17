@@ -182,4 +182,5 @@ export {
     loginUser,
     logoutUser,
     refreshAccessToken,
+    updatePassword,
 }
