@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "start": "node backend/index.js",
-    "dev": "nodemon -r dotenv/config --experimental-json-modules backend/index.js"
+    "server": "nodemon -r dotenv/config --experimental-json-modules backend/index.js",
+    "dev": "npm start --prefix frontend"
   },
   "author": "pkra9",
   "license": "MIT",
