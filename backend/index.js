@@ -21,7 +21,7 @@ app.use(express.json({ limit: "32kb" }))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
-    origin: process.env.CROS_ORIGIN,
+    origin: '*',
     credentials: true
 }))
 

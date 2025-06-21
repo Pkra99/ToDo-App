@@ -24,12 +24,12 @@ function Login() {
 
   return (
     <>
-        <seaction className="heading">
+        <section className="heading">
         <h1>
         <FaSignInAlt/> Login
         </h1>
         <p>Login to your account</p>
-        </seaction>
+        </section>
           <section className="form">
             <form onSubmit={onSubmit}>
                 <div className="form-group">

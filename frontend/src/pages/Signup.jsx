@@ -1,16 +1,38 @@
 import { useState, useEffect } from "react"
 import { FaUser } from "react-icons/fa"
+import {useSelector, useDispatch} from "react-redux"
+import{useNavigate} from "react-router-dom"
+import {toast} from "react-toastify" 
+import {signup, reset} from "../features/auth/authSlice"
+import Spinner from "../components/Spinner"
+
 
 function Signup() {
 
     const [formData, setFormData] = useState({
         name: "",
+        username: "",
         email: "",
         password: "",
         confirmPassword: ""
     })
 
-    const{name, email, password, confirmPassword} = formData;
+    const{name, username, email, password, confirmPassword} = formData;
+
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
+
+    const{user, error, loading,  success, message} = useSelector((state) => state.auth)
+
+    useEffect(() => {
+        if(error) {
+            toast.error(message)
+        }
+        if(success || user) {
+            navigate('/')
+        }
+        dispatch(reset())
+    },[user, error, loading, success, message, navigate, dispatch])
 
     const onChange = (e) => {
         setFormData((prevState) => ({
@@ -22,16 +44,35 @@ function Signup() {
 
     const onSubmit = (e) => {
         e.preventDefault()
+
+        if(password !== confirmPassword) {
+            toast.error("Passwords do not match")
+        }
+        else {
+            const userData = {
+                name, 
+                username, 
+                email,
+                password
+            }
+            dispatch(signup(userData))
+        }
+
+
+    }
+
+    if(loading){
+        return <Spinner />
     }
 
   return (
     <>
-        <seaction className="heading">
+        <section className="heading">
         <h1>
         <FaUser/> Signup
         </h1>
         <p>Sign up to create new account</p>
-        </seaction>
+        </section>
 
         <section className="form">
             <form onSubmit={onSubmit}>
@@ -43,6 +84,18 @@ function Signup() {
                 name="name" 
                 placeholder="Name" 
                 value={name} 
+                onChange={onChange}
+                />
+                </div>
+
+                <div className="form-group">
+                <input 
+                type="text" 
+                className='form-control' 
+                id="username" 
+                name="username" 
+                placeholder="Username" 
+                value={username} 
                 onChange={onChange}
                 />
                 </div>
