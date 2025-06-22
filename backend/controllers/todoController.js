@@ -58,13 +58,7 @@ const setTodo = asyncHandler(async(req, res) => {
 
 const updateTodo = asyncHandler(async(req, res) => {
 
-    const todo = await Todo.findById(req.params.id)
-
-    if(!todo){
-        throw new ApiError(404, "No todo found")
-    }
-
-    const {title, description} = req.body
+     const {title, description} = req.body
 
     if(!title || !description) {
         return res.status(400).json({
@@ -73,14 +67,23 @@ const updateTodo = asyncHandler(async(req, res) => {
         })    
     }
 
+    const todo = await Todo.findByIdAndUpdate(req.params.id,
+        {
+            title,
+            description
+        },
+        {
+            new: true
+        }   
+    )
+
+    if(!todo){
+        throw new ApiError(404, "No todo found")
+    }
+
     if(todo.user.toString() !== req.user._id.toString()){
         throw new ApiError(401, "User not authorized")
     }
-
-    todo.title = title
-    todo.description = description
-
-    todo.save({validateBeforeSave: false})
 
     res.status(200).json(
         new ApiResponse(200, todo, "Todo updated successfully")

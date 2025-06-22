@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import connectDB from "./db/db.js";
+import rateLimiter from "./middleware/rateLimiter.js";
 
 //env
 
@@ -24,6 +25,7 @@ app.use(cors({
     origin: '*',
     credentials: true
 }))
+app.use(rateLimiter)
 
 
 //DB connection
