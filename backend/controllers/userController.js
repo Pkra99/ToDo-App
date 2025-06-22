@@ -155,9 +155,9 @@ const updatePassword = asyncHandler(async(req, res)=>{
 
     const {oldPassword, newPassword, confPassword} = req.body
 
-    const user = await User.findById(req.user._id)
+    const user = await User.findById(req.user?.id)
 
-    const isPasswordCorrect = user.comparePassword(oldPassword)
+    const isPasswordCorrect = await user.comparePassword(oldPassword)
 
     if(!isPasswordCorrect){
         throw new ApiError(400, "Invalid password")
@@ -168,7 +168,7 @@ const updatePassword = asyncHandler(async(req, res)=>{
     }
 
     user.password = newPassword
-    user.save({validateBeforeSave: false})
+     await user.save({validateBeforeSave: false})
 
     return res
     .status(200)

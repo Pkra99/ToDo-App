@@ -103,6 +103,14 @@ const deleteTodo = asyncHandler(async(req, res) => {
     
     await todo.deleteOne(todo._id);
 
+    const user = await User.findById(req.user._id)
+     if(!user){
+        throw new ApiError(404, "User not found")
+    }
+
+    user.todos.pop(todo._id)
+    await user.save()
+
     res.status(200).json(
         new ApiResponse(200, todo, "Todo deleted successfully")
     )   
