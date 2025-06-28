@@ -22,7 +22,7 @@ app.use(express.json({ limit: "32kb" }))
 app.use(express.urlencoded({ extended: true }))
 app.use(cookieParser())
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: 'https://to-do-app-blush-omega.vercel.app/',
     credentials: true
 }))
 app.use(rateLimiter)
