@@ -5,7 +5,7 @@ const API_URL = 'https://todo-app-lve8.onrender.com/api/users/'
 //register user
 
 const signup = async (userData) => {
-    const response = await axios.post(API_URL + 'register', userData)
+    const response = await axios.post(API_URL + 'register', userData, { withCredentials: true })
 
     if(response.data) {
         localStorage.setItem('user', JSON.stringify(response.data))
@@ -23,7 +23,7 @@ const logout = () => {
 // login user
 
 const login = async (userData) => {
-    const response = await axios.post(API_URL + 'login', userData)
+    const response = await axios.post(API_URL + 'login', userData, { withCredentials: true })
 
     if(response.data) {
         localStorage.setItem('user', JSON.stringify(response.data))
