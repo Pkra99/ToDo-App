@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 
-const API_URL = '/api/todos/'
+const API_URL = 'https://todo-app-lve8.onrender.com/api/todos/'
 
 // add todo
 

@@ -72,8 +72,8 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: false,  // Set to false for local development (HTTP)
-        sameSite: 'lax', // Recommended for local dev
+        secure: true,  // Set to false for local development (HTTP)
+        sameSite: 'none', // Recommended for local dev
     }
 
     res.json({
@@ -105,8 +105,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: false, // Set to false for local development (HTTP)
-        sameSite: 'lax', // Recommended for local dev
+        secure: true, // Set to false for local development (HTTP)
+        sameSite: 'none', // Recommended for local dev
     }
 
     res.status(200)
@@ -136,8 +136,8 @@ const refreshAccessToken = asyncHandler(async(req, res)=>{
 
         const options = {
         httpOnly: true,
-        secure: false, // Set to false for local development (HTTP)
-        sameSite: 'lax', // Recommended for local dev
+        secure: true, // Set to false for local development (HTTP)
+        sameSite: 'none', // Recommended for local dev
         }
 
         const {acessToken, newRefreshToken} = await GenerateAccessAndRefreshtoken(user._id, options)    

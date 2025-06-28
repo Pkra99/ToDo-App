@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const API_URL = '/api/users/'
+const API_URL = 'https://todo-app-lve8.onrender.com/api/users/'
 
 //register user
 
