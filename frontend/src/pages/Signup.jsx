@@ -11,13 +11,12 @@ function Signup() {
 
     const [formData, setFormData] = useState({
         name: "",
-        username: "",
         email: "",
         password: "",
         confirmPassword: ""
     })
 
-    const{name, username, email, password, confirmPassword} = formData;
+    const{name, email, password, confirmPassword} = formData;
 
     const navigate = useNavigate()
     const dispatch = useDispatch()
@@ -51,7 +50,6 @@ function Signup() {
         else {
             const userData = {
                 name, 
-                username, 
                 email,
                 password
             }
@@ -84,18 +82,6 @@ function Signup() {
                 name="name" 
                 placeholder="Name" 
                 value={name} 
-                onChange={onChange}
-                />
-                </div>
-
-                <div className="form-group">
-                <input 
-                type="text" 
-                className='form-control' 
-                id="username" 
-                name="username" 
-                placeholder="Username" 
-                value={username} 
                 onChange={onChange}
                 />
                 </div>

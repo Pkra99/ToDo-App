@@ -118,6 +118,15 @@ h3 {
   margin-bottom: 10px;
 }
 
+.form-textarea {
+    width: 400px;  /* Sets a fixed width */
+    height: 200px; /* Sets a fixed height */
+    padding: 10px; /* Add some padding for better aesthetics */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
 .form-group input,
 .form-group textarea,
 .form-group select {
@@ -132,7 +141,7 @@ h3 {
 .form-group label {
   text-align: left;
   display: block;
-  margin: 0 0 5px 3px;
+  margin: 0 0 2px 2px;
 }
 
 .btn {

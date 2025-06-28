@@ -6,23 +6,20 @@ import jwt from 'jsonwebtoken'
 
 
 const registerUser = asyncHandler(async (req, res) => {
-    console.log(req.body);
-    const { username, email, password } = req.body;
+    const { name, email, password } = req.body;
 
-    if (!username || !email || !password) {
+    if (!name || !email || !password) {
         throw new ApiError(400, 'Please provide all the fields')
     }
 
-    const existingUser = await User.findOne({
-        $or: [{ email }, { username }]
-    });
+    const existingUser = await User.findOne({ email });
 
     if (existingUser) {
         throw new ApiError(400, 'User already exists')
     }
 
     const user = await User.create({
-        username: username.toLowerCase(),
+        name,
         email,
         password,
     });
@@ -60,7 +57,7 @@ const loginUser = asyncHandler(async (req, res) => {
     if (!email || !password) {
         throw new ApiError(400, 'Please provide all the fields')
     }
-    const user = await User.findOne({ email })
+    let user = await User.findOne({ email })
 
     if (!user || !(await user.comparePassword(password))) {
         throw new ApiError(400, 'Invalid email or password')
@@ -68,16 +65,23 @@ const loginUser = asyncHandler(async (req, res) => {
 
     const { accessToken, refreshToken } = await GenerateAccessAndRefreshtoken(user._id)
 
+    // for sending the logged in user data
+    user = user.toObject();
+    delete user.password;
+    // delete user.refreshToken;
+
     const options = {
         httpOnly: true,
-        secure: true,
+        secure: false,  // Set to false for local development (HTTP)
+        sameSite: 'lax', // Recommended for local dev
     }
 
-    return res.status(200)
-        .cookie('accessToken', accessToken, options)
-        .cookie('refreshToken', refreshToken, options)
-        .json(new ApiResponse(200, {}, 'Logged in successfully'))
-
+    res.json({
+      _id: user.id,
+      name: user.name,
+      email: user.email,
+      token: accessToken
+    })
 })
 const logoutUser = asyncHandler(async (req, res) => {
     
@@ -101,7 +105,8 @@ const logoutUser = asyncHandler(async (req, res) => {
 
     const options = {
         httpOnly: true,
-        secure: true,
+        secure: false, // Set to false for local development (HTTP)
+        sameSite: 'lax', // Recommended for local dev
     }
 
     res.status(200)
@@ -131,7 +136,8 @@ const refreshAccessToken = asyncHandler(async(req, res)=>{
 
         const options = {
         httpOnly: true,
-        secure: true,
+        secure: false, // Set to false for local development (HTTP)
+        sameSite: 'lax', // Recommended for local dev
         }
 
         const {acessToken, newRefreshToken} = await GenerateAccessAndRefreshtoken(user._id, options)    

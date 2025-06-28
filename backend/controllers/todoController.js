@@ -14,6 +14,7 @@ const getTodo = asyncHandler(async(req, res) => {
     if(!todo){
         throw new ApiError(404, "No todo found")
     }
+     
 
     res.status(200).json(
         new ApiResponse(200, todo, "Todo fetched successfully")
@@ -34,6 +35,7 @@ const setTodo = asyncHandler(async(req, res) => {
             message: "Please provide title and description",
         })    
     }
+    
     const todo = await Todo.create({
         title,
         description,
@@ -88,7 +90,6 @@ const updateTodo = asyncHandler(async(req, res) => {
     res.status(200).json(
         new ApiResponse(200, todo, "Todo updated successfully")
     )
-
 })
 
 
@@ -117,7 +118,6 @@ const deleteTodo = asyncHandler(async(req, res) => {
     res.status(200).json(
         new ApiResponse(200, todo, "Todo deleted successfully")
     )   
-
 })
 
 export {
